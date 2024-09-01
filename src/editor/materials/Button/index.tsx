@@ -7,9 +7,9 @@ export interface ButtonProps {
   text: string;
 }
 
-const Button = ({ type, text, id }: CommonComponentProps) => {
+const Button = ({ type, text, id, styles }: CommonComponentProps) => {
   return (
-    <AntdButton data-component-id={id} type={type}>{text}</AntdButton>
+    <AntdButton data-component-id={id} type={type} style={styles}>{text}</AntdButton>
   )
 }
 

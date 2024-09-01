@@ -29,7 +29,13 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
 
   useEffect(() => {
     updatePosition();
-  }, [componentId, components]);
+  }, [componentId]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      updatePosition();
+    }, 200);
+  }, [components])
 
   useEffect(() => {
     const resizeHandler = () => {
