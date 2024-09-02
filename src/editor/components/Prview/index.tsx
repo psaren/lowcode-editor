@@ -1,8 +1,8 @@
-import { message } from 'antd';
+import { message } from "antd";
 import React, { useRef, forwardRef } from "react";
 import { useComponentConfigStore } from "../../stores/component-config";
 import { Component, useComponetsStore } from "../../stores/components";
-import { ActionConfig } from '../Setting/ActionModal';
+import { ActionConfig } from "../Setting/ActionModal";
 
 export function Preview() {
   const { components } = useComponetsStore();
@@ -16,46 +16,45 @@ export function Preview() {
       const eventConfig = component.props[event.name];
 
       if (eventConfig) {
-        props[event.name] = () => {
+        props[event.name] = (...args: any[]) => {
           eventConfig?.actions?.forEach((action: ActionConfig) => {
-            if (action.type === 'goToLink') {
+            if (action.type === "goToLink") {
               window.location.href = action.url;
-            } else if (action.type === 'showMessage') {
-              if (action.config.type === 'success') {
+            } else if (action.type === "showMessage") {
+              if (action.config.type === "success") {
                 message.success(action.config.text);
-              } else if (action.config.type === 'error') {
+              } else if (action.config.type === "error") {
                 message.error(action.config.text);
               }
-            } else if (action.type === 'customJS') {
-              const func = new Function('context', action.code);
-              func({
-                name: component.name,
-                props: component.props,
-                showMessage(content: string) {
-                  message.success(content)
-                }
-              });
-
-            } else if (action.type === 'componentMethod') {
+            } else if (action.type === "customJS") {
+              const func = new Function("context", "args", action.code);
+              func(
+                {
+                  name: component.name,
+                  props: component.props,
+                  showMessage(content: string) {
+                    message.success(content);
+                  },
+                },
+                args
+              );
+            } else if (action.type === "componentMethod") {
               const component = componentRefs.current[action.config.componentId];
 
               if (component) {
-                component[action.config.method]?.();
+                component[action.config.method]?.(...args);
               }
             }
-
-          })
-
-        }
+          });
+        };
       }
-    })
+    });
     return props;
   }
 
-
   function renderComponents(components: Component[]): React.ReactNode {
     return components.map((component: Component) => {
-      const config = componentConfig?.[component.name]
+      const config = componentConfig?.[component.name];
 
       if (!config?.prod) {
         return null;
@@ -68,19 +67,20 @@ export function Preview() {
           id: component.id,
           name: component.name,
           styles: component.styles,
-          ref: config.prod.$$typeof === Symbol.for('react.forward_ref')
-            ? ((ref: Record<string, any>) => { componentRefs.current[component.id] = ref; })
-            : null,
+          ref:
+            config.prod.$$typeof === Symbol.for("react.forward_ref")
+              ? (ref: Record<string, any>) => {
+                  componentRefs.current[component.id] = ref;
+                }
+              : null,
           ...config.defaultProps,
           ...component.props,
-          ...handleEvent(component)
+          ...handleEvent(component),
         },
         renderComponents(component.children || [])
-      )
-    })
+      );
+    });
   }
 
-  return <div>
-    {renderComponents(components)}
-  </div>
+  return <div>{renderComponents(components)}</div>;
 }
