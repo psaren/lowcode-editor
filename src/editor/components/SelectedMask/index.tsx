@@ -1,21 +1,16 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { createPortal } from 'react-dom';
-import { getComponentById, useComponetsStore } from '../../stores/components';
-import { Dropdown, Popconfirm, Space } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { getComponentById, useComponetsStore } from "../../stores/components";
+import { Dropdown, Popconfirm, Space } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 interface SelectedMaskProps {
-  portalWrapperClassName: string
-  containerClassName: string
+  portalWrapperClassName: string;
+  containerClassName: string;
   componentId: number;
 }
 
 function SelectedMask({ containerClassName, portalWrapperClassName, componentId }: SelectedMaskProps) {
-
   const [position, setPosition] = useState({
     left: 0,
     top: 0,
@@ -35,18 +30,17 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
     setTimeout(() => {
       updatePosition();
     }, 200);
-  }, [components])
+  }, [components]);
 
   useEffect(() => {
     const resizeHandler = () => {
       updatePosition();
-    }
-    window.addEventListener('resize', resizeHandler)
+    };
+    window.addEventListener("resize", resizeHandler);
     return () => {
-      window.removeEventListener('resize', resizeHandler)
-    }
+      window.removeEventListener("resize", resizeHandler);
+    };
   }, []);
-
 
   function updatePosition() {
     if (!componentId) return;
@@ -78,7 +72,7 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
   }
 
   const el = useMemo(() => {
-    return document.querySelector(`.${portalWrapperClassName}`)!
+    return document.querySelector(`.${portalWrapperClassName}`)!;
   }, []);
 
   const curSelectedComponent = useMemo(() => {
@@ -100,10 +94,11 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
     }
 
     return parentComponents;
-
   }, [curComponent]);
 
-  return createPortal((
+  if (!el) return null;
+
+  return createPortal(
     <>
       <div
         style={{
@@ -117,7 +112,7 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
           height: position.height,
           zIndex: 12,
           borderRadius: 4,
-          boxSizing: 'border-box',
+          boxSizing: "border-box",
         }}
       />
       <div
@@ -127,52 +122,48 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
           top: position.labelTop,
           fontSize: "14px",
           zIndex: 13,
-          display: (!position.width || position.width < 10) ? "none" : "inline",
-          transform: 'translate(-100%, -100%)',
+          display: !position.width || position.width < 10 ? "none" : "inline",
+          transform: "translate(-100%, -100%)",
         }}
       >
         <Space>
           <Dropdown
             menu={{
-              items: parentComponents.map(item => ({
+              items: parentComponents.map((item) => ({
                 key: item.id,
                 label: item.desc,
               })),
               onClick: ({ key }) => {
                 setCurComponentId(+key);
-              }
+              },
             }}
             disabled={parentComponents.length === 0}
           >
             <div
               style={{
-                padding: '0 8px',
-                backgroundColor: 'blue',
+                padding: "0 8px",
+                backgroundColor: "blue",
                 borderRadius: 4,
-                color: '#fff',
+                color: "#fff",
                 cursor: "pointer",
-                whiteSpace: 'nowrap',
+                whiteSpace: "nowrap",
               }}
             >
               {curSelectedComponent?.desc}
             </div>
           </Dropdown>
           {curComponentId !== 1 && (
-            <div style={{ padding: '0 8px', backgroundColor: 'blue' }}>
-              <Popconfirm
-                title="确认删除？"
-                okText={'确认'}
-                cancelText={'取消'}
-                onConfirm={handleDelete}
-              >
-                <DeleteOutlined style={{ color: '#fff' }} />
+            <div style={{ padding: "0 8px", backgroundColor: "blue" }}>
+              <Popconfirm title="确认删除？" okText={"确认"} cancelText={"取消"} onConfirm={handleDelete}>
+                <DeleteOutlined style={{ color: "#fff" }} />
               </Popconfirm>
             </div>
           )}
         </Space>
       </div>
-    </>
-  ), el)
+    </>,
+    el
+  );
 }
 
 export default SelectedMask;

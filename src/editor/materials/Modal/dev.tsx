@@ -2,7 +2,7 @@ import { useMaterailDrop } from "../../hooks/useMaterialDrop";
 import { CommonComponentProps } from "../../interface";
 
 function Modal({ id, children, title, styles }: CommonComponentProps) {
-  const { canDrop, drop } = useMaterailDrop(["Button", "Container", "Table", "Form"], id);
+  const { canDrop, drop } = useMaterailDrop(["Button", "Container", "Table", "Form", "LineChart"], id);
 
   return (
     <div

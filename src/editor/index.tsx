@@ -8,14 +8,14 @@ import { useComponetsStore } from "./stores/components";
 import { Preview } from "./components/Prview";
 
 export default function ReactPlayground() {
-  const { mode } = useComponetsStore();
+  const { mode, setEditorSize } = useComponetsStore();
   return (
     <div className="h-[100vh] flex flex-col">
       <div className="min-h60 flex items-center border-b-[1px] border-[#000]">
         <Header />
       </div>
       {mode === "edit" ? (
-        <Allotment>
+        <Allotment onDragEnd={setEditorSize}>
           <Allotment.Pane preferredSize={240} maxSize={300} minSize={200}>
             <MaterialWrapper />
           </Allotment.Pane>

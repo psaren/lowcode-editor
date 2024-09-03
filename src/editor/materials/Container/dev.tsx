@@ -4,7 +4,7 @@ import { CommonComponentProps } from "../../interface";
 import { useEffect, useRef } from "react";
 
 const Container = ({ id, name, children, styles }: CommonComponentProps) => {
-  const { canDrop, drop } = useMaterailDrop(["Button", "Container", "Table", "Form"], id);
+  const { canDrop, drop } = useMaterailDrop(["Button", "Container", "Table", "Form", "LineChart"], id);
 
   const divRef = useRef<HTMLDivElement>(null);
 

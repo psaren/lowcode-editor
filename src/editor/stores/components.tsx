@@ -17,6 +17,7 @@ interface State {
   mode: "edit" | "preview";
   curComponentId?: number | null;
   curComponent: Component | null;
+  editorSize: number[];
 }
 
 interface Action {
@@ -26,6 +27,7 @@ interface Action {
   updateComponentStyles: (componentId: number, styles: CSSProperties, repalce?: boolean) => void;
   setCurComponentId: (componentId: number | null) => void;
   setMode: (mode: State["mode"]) => void;
+  setEditorSize: (sizes: State["editorSize"]) => void;
 }
 
 const creator: StateCreator<State & Action> = (set, get) => ({
@@ -40,6 +42,7 @@ const creator: StateCreator<State & Action> = (set, get) => ({
   curComponentId: null,
   curComponent: null,
   mode: "edit",
+  editorSize: [],
   setCurComponentId: (componentId) =>
     set((state) => ({
       curComponentId: componentId,
@@ -98,6 +101,7 @@ const creator: StateCreator<State & Action> = (set, get) => ({
       return { components: [...state.components] };
     }),
   setMode: (mode) => set({ mode }),
+  setEditorSize: (sizes) => set({ editorSize: sizes }),
 });
 
 export const useComponetsStore = create<State & Action>()(
